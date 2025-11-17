@@ -1,0 +1,27 @@
+@startuml
+title Buscar Material / Visualizar Detalhes do Material
+
+actor Usuario
+participant "Web UI" as UI
+participant API
+participant "Serviço de Busca" as SearchService
+participant Repositorio as Repo
+
+' --- Fluxo de Busca ---
+Usuario -> UI : Pesquisar(query)
+UI -> API : GET /api/materiais?query=...
+API -> SearchService : consultarIndices(query)
+SearchService -> Repo : executarQuery(query)
+Repo --> SearchService : resultadosParciais
+SearchService --> API : retornarResultados()
+API --> UI : entregarResultados()
+
+' --- Fluxo de Visualização de Detalhes ---
+Usuario -> UI : solicitarDetalhes(id)
+UI -> API : GET /api/materiais/{id}
+API -> Repo : obterMetadados(id)
+Repo --> API : metadados + disponibilidade + histórico
+API --> UI : retornarDetalhes()
+
+@enduml
+

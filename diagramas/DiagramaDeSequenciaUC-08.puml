@@ -1,0 +1,33 @@
+@startuml
+title Registrar Devolução (UC-08)
+
+actor Bibliotecario
+participant "Web UI" as UI
+participant API
+participant "Serviço de Empréstimo" as LoanService
+participant "Repositório" as Repo
+participant "Serviço de Pagamentos" as PaymentService
+participant "Serviço de Notificação" as NotificationService
+actor Usuario
+
+' --- Passo 1: Ação do Bibliotecário ---
+Bibliotecario -> UI : Registrar devolução
+UI -> API : POST /api/emprestimos/{id}/devolver
+
+' --- Passo 2: Cálculo de atraso e multa ---
+API -> LoanService : registrarDevolucao(emprestimoId, dataDevolucao)
+LoanService -> LoanService : calcularAtrasoEMulta()
+
+' --- Passo 3: Atualiza status e exemplar ---
+LoanService -> Repo : atualizarEmprestimo(status=DEVOLVIDO)\n+ atualizarDisponibilidade()
+
+' --- Passo 4: Registrar multa (se houver) ---
+LoanService -> PaymentService : registrarMulta()
+PaymentService -> Repo : salvarMultaPendente()
+
+' --- Passo 5: Notificar Usuário ---
+LoanService -> NotificationService : notificarDevolucao()
+NotificationService -> Usuario : enviarConfirmacao()
+
+@enduml
+

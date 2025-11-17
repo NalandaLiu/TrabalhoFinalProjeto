@@ -1,0 +1,65 @@
+@startuml
+skinparam rectangle {
+  BackgroundColor #fdfdfd
+  BorderColor #555
+  RoundCorner 15
+}
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam ArrowColor #333
+
+title Arquitetura de Microsserviços
+
+' ==================== CAMADAS ====================
+package "Frontend" as FE #DCC6E0 {
+  rectangle "SPA (React / Vue)" as spa
+}
+
+package "API Gateway" as GW #C7DDF6 {
+  rectangle "API Gateway\nRate limiting, JWT, Routing" as api
+}
+
+spa --> api
+
+package "Services" as SVC #FAF1C0 {
+  rectangle "Materials Service" as materials
+  rectangle "Loans Service" as loans
+  rectangle "Notification Service" as notif
+  rectangle "Reports Service" as reports
+  rectangle "Integration Worker" as integration
+}
+
+api --> materials
+api --> loans
+api --> notif
+api --> reports
+api --> integration
+
+' ==================== BANCOS E STORAGE ====================
+package "Data Layer" as DB #F7E2C4 {
+  rectangle "PostgreSQL\n(primary)" as pg
+  rectangle "Elasticsearch\n(search)" as es
+  rectangle "Object Storage\n(S3)" as s3
+}
+
+package "Messaging" as MSG #E3E3E3 {
+  rectangle "Message Broker\nRabbitMQ" as mq
+}
+
+' Conexões dos serviços com bancos / storage
+materials --> pg
+materials --> es
+
+loans --> pg
+
+notif --> mq
+notif --> s3
+
+reports --> pg
+reports --> es
+
+integration --> mq
+integration --> s3
+
+@enduml
+

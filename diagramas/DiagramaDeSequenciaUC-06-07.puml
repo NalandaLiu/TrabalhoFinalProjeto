@@ -1,0 +1,18 @@
+@startuml
+actor Usuario
+participant UI
+participant API
+participant LoansService as LS
+participant Repository as DB
+participant NotificationService as NS
+
+Usuario -> UI: Solicita empréstimo
+UI -> API: POST /emprestimos
+API -> LS: validarSolicitacao()
+LS -> DB: criarSolicitacao(status=PENDENTE)
+DB --> LS: ok
+LS -> NS: notificarBibliotecario()
+NS --> LS: ok
+API --> UI: Solicitação criada
+@enduml
+

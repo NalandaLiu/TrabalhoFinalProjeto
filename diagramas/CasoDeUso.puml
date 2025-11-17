@@ -1,0 +1,22 @@
+@startuml
+left to right direction
+actor Usuario as U
+actor Bibliotecario as B
+actor Admin as A
+
+U -- (Autenticar Usuário)
+U -- (Buscar Material)
+U -- (Reservar Material)
+U -- (Solicitar Empréstimo)
+U -- (Renovar Empréstimo)
+U -- (Visualizar Detalhes do Material)
+
+B -- (Gerenciar Acervo)
+B -- (Aprovar Empréstimo)
+B -- (Registrar Devolução)
+
+A -- (Gerenciar Usuários)
+A -- (Gerenciar Acervo)
+A -- (Gerar Relatórios)
+A -- (Registrar Usuário)
+@enduml

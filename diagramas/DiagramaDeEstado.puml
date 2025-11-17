@@ -1,0 +1,10 @@
+@startuml
+[*] --> Disponivel
+Disponivel --> Reservado : reserva
+Disponivel --> Emprestado : empréstimo
+Reservado --> Emprestado : retirada
+Emprestado --> Disponivel : devolução
+Emprestado --> Perdido : extravio
+@enduml
+
+

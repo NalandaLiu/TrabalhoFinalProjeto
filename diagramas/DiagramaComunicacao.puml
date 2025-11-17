@@ -1,0 +1,36 @@
+@startuml
+title Diagrama de Comunicação – Solicitar e Aprovar Empréstimo
+
+participant UI
+participant API
+participant LoansService
+participant Repository
+participant NotificationService
+actor Bibliotecario
+
+' --- Solicitação de Empréstimo ---
+UI -> API : solicitarEmprestimo()
+API -> LoansService : solicitarEmprestimo(usuarioId, exemplarId)
+LoansService -> Repository : criarSolicitacao(status=PENDENTE)
+Repository --> LoansService : retorno
+LoansService -> NotificationService : notificarPendencia()
+NotificationService -> Bibliotecario : novaSolicitacaoPendente()
+
+' --- Aprovação do Bibliotecário ---
+Bibliotecario -> UI : abrirPainelSolicitacoes()
+UI -> API : obterSolicitacoesPendentes()
+API -> Repository : listarPendentes()
+Repository --> API : listaSolicitacoes
+API --> UI : exibirPendentes()
+
+Bibliotecario -> UI : aprovarOuRecusar()
+UI -> API : atualizarStatus(id, APROVADO/RECUSADO)
+API -> LoansService : atualizarStatus()
+LoansService -> Repository : registrarEmprestimo() ou cancelarSolicitacao()
+Repository --> LoansService : confirmacao
+
+' --- Notificação ao Usuário ---
+LoansService -> NotificationService : enviarConfirmacao()
+NotificationService -> UI : notificarUsuario()
+
+@enduml

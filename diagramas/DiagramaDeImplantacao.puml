@@ -1,0 +1,58 @@
+@startuml
+skinparam rectangle {
+  BackgroundColor #F2F7FF
+  BorderColor #4A90E2
+  RoundCorner 15
+}
+skinparam node {
+  BackgroundColor #FFFFFF
+  BorderColor #4A90E2
+  RoundCorner 10
+}
+skinparam cloud {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+}
+skinparam database {
+  BackgroundColor #FFFFFF
+  BorderColor #999999
+}
+
+title Diagrama de Implantação - Arquitetura em Nuvem
+
+node "Cluster Kubernetes\nNamespace: prod" as k8s_cluster {
+
+    node "API Gateway\n(Deployment)" as api_gateway
+    node "Microservice A\n(Deployment)" as svcA
+    node "Microservice B\n(Deployment)" as svcB
+    node "Message Broker\nRabbitMQ (Deployment)" as rabbitmq
+}
+
+database "PostgreSQL\nManaged Service\n(RDS / Cloud SQL)" as postgres
+cloud "Object Storage\nS3 Bucket" as s3
+cloud "Elasticsearch\nManaged Cluster" as elastic
+node "Integration Worker\n(Job/Cron)" as worker
+
+' Relações
+api_gateway --> svcA
+api_gateway --> svcB
+
+svcA --> postgres
+svcB --> postgres
+
+svcA --> elastic
+svcB --> elastic
+
+svcA --> s3
+svcB --> s3
+
+svcA --> rabbitmq
+svcB --> rabbitmq
+
+rabbitmq --> worker
+
+worker --> postgres
+worker --> s3
+
+@enduml
+

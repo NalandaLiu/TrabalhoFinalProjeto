@@ -1,0 +1,37 @@
+@startuml
+class Usuario {
+  +UUID id
+  +String nome
+  +String email
+  +String tipo
+  +Boolean bloqueado
+}
+
+class Material {
+  +UUID id
+  +String titulo
+  +String isbn
+  +String tipo
+}
+
+class Exemplar {
+  +UUID id
+  +String codigoInterno
+  +String localizacao
+  +String status
+}
+
+class Emprestimo {
+  +UUID id
+  +Date dataEmprestimo
+  +Date dataPrevista
+  +Date dataDevolucao
+  +String status
+  +Double multa
+}
+
+Usuario "1" -- "*" Emprestimo
+Material "1" -- "*" Exemplar
+Exemplar "1" -- "0..1" Emprestimo
+@enduml
+
